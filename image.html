@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saphira AI - Image Generator</title>
+<title>Saphira AI - Image Studio</title>
 
 <style>
 body{
@@ -15,10 +16,10 @@ padding:20px;
 }
 
 .logo{
-font-size:36px;
+font-size:34px;
 font-weight:bold;
-color:#7b5cff;
 text-align:center;
+color:#7b5cff;
 margin-bottom:20px;
 }
 
@@ -29,7 +30,7 @@ font-weight:bold;
 }
 
 .box{
-background:rgba(255,255,255,0.08);
+background:rgba(255,255,255,.08);
 padding:20px;
 border-radius:20px;
 margin-top:20px;
@@ -38,39 +39,21 @@ margin-top:20px;
 textarea{
 width:100%;
 height:120px;
+padding:15px;
 border:none;
 border-radius:15px;
-padding:15px;
 font-size:16px;
 box-sizing:border-box;
 }
 
-.button{
-display:block;
-text-align:center;
-background:#7b5cff;
-color:white;
-text-decoration:none;
-padding:15px;
-border-radius:40px;
-margin-top:20px;
-font-weight:bold;
-}
-
-.preview{
-margin-top:25px;
-border:2px dashed #7b5cff;
-border-radius:20px;
-padding:30px;
-text-align:center;
-color:#cfc6ff;
-}
-</style>.upload{
+.upload{
 display:block;
 margin-top:15px;
-color:#cfc6ff;
+margin-bottom:8px;
 font-weight:bold;
+color:#cfc6ff;
 }
+
 input[type=file]{
 width:100%;
 padding:12px;
@@ -78,7 +61,39 @@ border:2px dashed #7b5cff;
 border-radius:12px;
 background:rgba(255,255,255,.05);
 color:white;
+box-sizing:border-box;
 }
+
+.button{
+width:100%;
+margin-top:20px;
+padding:15px;
+border:none;
+border-radius:40px;
+background:#7b5cff;
+color:white;
+font-size:18px;
+font-weight:bold;
+}
+
+#previewBox{
+display:none;
+margin-top:20px;
+text-align:center;
+}
+
+#previewImage{
+width:100%;
+max-width:300px;
+border-radius:15px;
+border:2px solid #7b5cff;
+}
+
+#result{
+margin-top:25px;
+text-align:center;
+}
+</style>
 </head>
 
 <body>
@@ -88,96 +103,86 @@ color:white;
 <div class="logo">Saphira AI</div>
 
 <div class="box">
-<h2>AI Image Generator</h2>
-<p>Describe the image you want to create.</p>
+
+<h2>AI Image Studio</h2>
+
+<p>Describe what you want to create.</p>
+
+<textarea id="prompt" placeholder="Example: A futuristic African queen wearing glowing purple armor..."></textarea>
+
 <label class="upload">📷 Reference Image (Optional)</label>
+
 <input type="file" id="referenceImage" accept="image/*">
-<div id="previewBox" style="display:none;margin-top:15
- px;text-align:center;"> 
-   <img id="previewImage" 
- style="width:100%;max-width:300px;border-radius:15
-   px;border:2px solid #7b5cff;">
+
+<div id="previewBox">
+<img id="previewImage">
 </div>
-<textarea placeholder="Example: A futuristic African queen wearing glowing purple armor in a neon city..."></textarea>
+
 <button class="button" onclick="generateImage()">Generate Image</button>
 
-<div class="preview">
-✨ Your generated image will appear here.
-</div>
+<div id="result"></div>
 
 </div>
+
 <script>
-const fileInput = document.getElementById("referenceImage");
+const fileInput=document.getElementById("referenceImage");
+const previewBox=document.getElementById("previewBox");
+const previewImage=document.getElementById("previewImage");
 
-
-fileInput.addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
-    previewImage.src = URL.createObjectURL(file);
-    previewBox.style.display = "block";
-  }
+fileInput.addEventListener("change",function(){
+const file=this.files[0];
+if(file){
+previewImage.src=URL.createObjectURL(file);
+previewBox.style.display="block";
+}
 });
- async function generateImage() {
-  const prompt = document.querySelector("textarea").value;
-  const button = document.querySelector("button.button");
 
-  if (!prompt.trim()) {
-    alert("Please enter a prompt.");
-    return;
-  }
+async function generateImage(){
 
-  button.innerHTML = "✨ Generating...";
-  button.disabled = true;
+const prompt=document.getElementById("prompt").value.trim();
 
-  try {
-    const response = await fetch("/api/image", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ prompt })
-    });
+if(!prompt){
+alert("Please enter a prompt.");
+return;
+}
 
-    const data = await response.json();
+const button=document.querySelector(".button");
+const result=document.getElementById("result");
 
-    if (!response.ok) {
-      throw new Error(data.error || "Generation failed");
-    }
+button.disabled=true;
+button.innerHTML="✨ Generating...";
 
-    const img = document.createElement("img");
-    img.src = "data:image/png;base64," + data.data[0].b64_json;
-    img.style.width = "100%";
-    img.style.borderRadius = "15px";
-    img.style.marginTop = "20px";
+try{
 
-    const result = document.querySelector(".preview");
-    result.innerHTML = "";
-    result.appendChild(img);
+const response=await fetch("/api/image",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({prompt})
+});
 
-  } catch (error) {
-    alert(error.message);
-  } finally {
-    button.innerHTML = "Generate Image";
-    button.disabled = false;
-  }
- {
-  const prompt = document.querySelector("textarea").value;
+const data=await response.json();
 
-  if (!prompt.trim()) {
-    alert("Please enter a prompt first.");
-    return;
-  }
+if(!response.ok){
+throw new Error(data.error||"Generation failed");
+}
 
-  const button = document.querySelector("button.button");
-  button.innerHTML = "✨ Generating...";
-  button.disabled = true;
+result.innerHTML=`<img src="data:image/png;base64,${data.data[0].b64_json}" style="width:100%;border-radius:20px;margin-top:15px;">`;
 
-  setTimeout(() => {
-    button.innerHTML = "Generate Image";
-    button.disabled = false;
-    alert("Saphira AI is responding. We'll connect the real AI next.");
-  }, 2000);
+}catch(error){
+
+result.innerHTML=`<p style="color:#ffb3b3;">${error.message}</p>`;
+
+}finally{
+
+button.disabled=false;
+button.innerHTML="Generate Image";
+
+}
+
 }
 </script>
+
 </body>
 </html>
