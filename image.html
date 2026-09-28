@@ -117,7 +117,50 @@ fileInput.addEventListener("change", function () {
     previewBox.style.display = "block";
   }
 });
- function generateImage() {
+ async function generateImage() {
+  const prompt = document.querySelector("textarea").value;
+  const button = document.querySelector("button.button");
+
+  if (!prompt.trim()) {
+    alert("Please enter a prompt.");
+    return;
+  }
+
+  button.innerHTML = "✨ Generating...";
+  button.disabled = true;
+
+  try {
+    const response = await fetch("/api/image", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Generation failed");
+    }
+
+    const img = document.createElement("img");
+    img.src = "data:image/png;base64," + data.data[0].b64_json;
+    img.style.width = "100%";
+    img.style.borderRadius = "15px";
+    img.style.marginTop = "20px";
+
+    const result = document.querySelector(".preview");
+    result.innerHTML = "";
+    result.appendChild(img);
+
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    button.innerHTML = "Generate Image";
+    button.disabled = false;
+  }
+ {
   const prompt = document.querySelector("textarea").value;
 
   if (!prompt.trim()) {
