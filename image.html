@@ -108,8 +108,7 @@ color:white;
 </div>
 <script>
 const fileInput = document.getElementById("referenceImage");
-const previewBox = document.getElementById("previewBox");
-const previewImage = document.getElementById("previewImage");
+
 
 fileInput.addEventListener("change", function () {
   const file = this.files[0];
@@ -118,6 +117,24 @@ fileInput.addEventListener("change", function () {
     previewBox.style.display = "block";
   }
 });
+ function generateImage() {
+  const prompt = document.querySelector("textarea").value;
+
+  if (!prompt.trim()) {
+    alert("Please enter a prompt first.");
+    return;
+  }
+
+  const button = document.querySelector("button.button");
+  button.innerHTML = "✨ Generating...";
+  button.disabled = true;
+
+  setTimeout(() => {
+    button.innerHTML = "Generate Image";
+    button.disabled = false;
+    alert("Saphira AI is responding. We'll connect the real AI next.");
+  }, 2000);
+}
 </script>
 </body>
 </html>
