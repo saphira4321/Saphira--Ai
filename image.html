@@ -65,7 +65,20 @@ padding:30px;
 text-align:center;
 color:#cfc6ff;
 }
-</style>
+</style>.upload{
+display:block;
+margin-top:15px;
+color:#cfc6ff;
+font-weight:bold;
+}
+input[type=file]{
+width:100%;
+padding:12px;
+border:2px dashed #7b5cff;
+border-radius:12px;
+background:rgba(255,255,255,.05);
+color:white;
+}
 </head>
 
 <body>
@@ -77,9 +90,10 @@ color:#cfc6ff;
 <div class="box">
 <h2>AI Image Generator</h2>
 <p>Describe the image you want to create.</p>
-
+<label class="upload">📷 Reference Image (Optional)</label>
+<input type="file" id="referenceImage" accept="image/*">
 <textarea placeholder="Example: A futuristic African queen wearing glowing purple armor in a neon city..."></textarea>
-
+<a href="#" class="button">Generate Image</a>
 <a href="#" class="button">Generate Image</a>
 
 <div class="preview">
