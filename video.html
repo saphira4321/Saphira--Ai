@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saphira AI - Video Studio</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#050816,#1a0f3d,#0b1f5c);color:white;padding:20px}
+.logo{text-align:center;font-size:34px;font-weight:bold;color:#7b5cff;margin:20px 0}
+.box{background:rgba(255,255,255,.08);padding:20px;border-radius:20px}
+textarea{width:100%;height:120px;padding:15px;border:none;border-radius:15px;box-sizing:border-box}
+.btns{display:flex;gap:10px;margin-top:15px}
+.btns button,.main{flex:1;padding:12px;border:none;border-radius:30px;background:#7b5cff;color:white;font-weight:bold}
+.main{width:100%;margin-top:20px}
+#result{text-align:center;margin-top:20px}
+</style>
+</head>
+<body>
+
+<div class="logo">Saphira AI</div>
+
+<div class="box">
+<h2>Video Studio</h2>
+
+<textarea id="prompt" placeholder="Describe the video you want..."></textarea>
+
+<div class="btns">
+<button onclick="setD(5)">5s</button>
+<button onclick="setD(10)">10s</button>
+<button onclick="setD(15)">15s</button>
+</div>
+
+<button class="main" onclick="gen()">Generate Video</button>
+
+<div id="result"></div>
+</div>
+
+<script>
+let duration=5;
+function setD(d){duration=d;}
+async function gen(){
+const prompt=document.getElementById("prompt").value;
+const r=await fetch("/api/video",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({prompt,duration})
+});
+const data=await r.json();
+document.getElementById("result").innerHTML=`<p>${data.message}</p><p>${data.duration}s selected</p>`;
+}
+</script>
+
+</body>
+</html>
