@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saphira AI - Chat</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#050816,#1a0f3d,#0b1f5c);
+color:white;
+display:flex;
+flex-direction:column;
+height:100vh;
+}
+.header{
+padding:18px;
+text-align:center;
+font-size:28px;
+font-weight:bold;
+color:#7b5cff;
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+#messages{
+flex:1;
+padding:15px;
+overflow:auto;
+}
+.user{
+background:#7b5cff;
+padding:12px;
+border-radius:16px;
+margin:10px 0;
+align-self:flex-end;
+}
+.ai{
+background:rgba(255,255,255,.08);
+padding:12px;
+border-radius:16px;
+margin:10px 0;
+}
+.bottom{
+padding:15px;
+display:flex;
+gap:10px;
+}
+input{
+flex:1;
+padding:14px;
+border:none;
+border-radius:30px;
+}
+button{
+padding:14px 20px;
+border:none;
+border-radius:30px;
+background:#7b5cff;
+color:white;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Saphira AI Chat</div>
+
+<div id="messages">
+<div class="ai">Hi! I'm Saphira AI. Ask me anything.</div>
+</div>
+
+<div class="bottom">
+<input id="chatInput" placeholder="Type your message...">
+<button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+async function sendMessage(){
+
+const input=document.getElementById("chatInput");
+const text=input.value.trim();
+
+if(!text) return;
+
+const messages=document.getElementById("messages");
+
+messages.innerHTML+=`<div class="user">${text}</div>`;
+
+input.value="";
+
+try{
+
+const response=await fetch("/api/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+message:text
+})
+});
+
+const data=await response.json();
+
+messages.innerHTML+=`<div class="ai">${data.reply}</div>`;
+
+messages.scrollTop=messages.scrollHeight;
+
+}catch(err){
+
+messages.innerHTML+=`<div class="ai">Connection error.</div>`;
+
+}
+
+}
+</script>
+
+</body>
+</html>
