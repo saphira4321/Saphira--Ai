@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saphira AI - Video Studio</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#050816,#1a0f3d,#0b1f5c);
+color:white;
+padding:20px;
+}
+
+.logo{
+font-size:34px;
+font-weight:bold;
+text-align:center;
+color:#7b5cff;
+margin-bottom:20px;
+}
+
+.back{
+color:#7b5cff;
+text-decoration:none;
+font-weight:bold;
+}
+
+.box{
+background:rgba(255,255,255,.08);
+padding:20px;
+border-radius:20px;
+margin-top:20px;
+}
+
+textarea{
+width:100%;
+height:120px;
+padding:15px;
+border:none;
+border-radius:15px;
+box-sizing:border-box;
+font-size:16px;
+}
+
+.upload{
+display:block;
+margin:15px 0 8px;
+font-weight:bold;
+color:#cfc6ff;
+}
+
+input[type=file]{
+width:100%;
+padding:12px;
+border:2px dashed #7b5cff;
+border-radius:12px;
+background:rgba(255,255,255,.05);
+color:white;
+box-sizing:border-box;
+}
+
+.buttons{
+display:flex;
+gap:10px;
+margin-top:20px;
+}
+
+.buttons button{
+flex:1;
+padding:12px;
+border:none;
+border-radius:30px;
+background:#2d2355;
+color:white;
+font-weight:bold;
+}
+
+.buttons button.active{
+background:#7b5cff;
+}
+
+.mainButton{
+width:100%;
+margin-top:20px;
+padding:15px;
+border:none;
+border-radius:40px;
+background:#7b5cff;
+color:white;
+font-size:18px;
+font-weight:bold;
+}
+
+#previewBox{
+display:none;
+margin-top:20px;
+text-align:center;
+}
+
+#previewImage{
+width:100%;
+max-width:300px;
+border-radius:15px;
+border:2px solid #7b5cff;
+}
+
+#result{
+margin-top:20px;
+text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="back">← Back</a>
+
+<div class="logo">Saphira AI</div>
+
+<div class="box">
+
+<h2>Video Studio</h2>
+
+<textarea id="prompt" placeholder="Describe the video you want to create..."></textarea>
+
+<label class="upload">📷 Reference Image (Optional)</label>
+
+<input type="file" id="referenceImage" accept="image/*">
+
+<div id="previewBox">
+<img id="previewImage">
+</div>
+
+<div class="buttons">
+<button class="active" onclick="selectDuration(5)">5s</button>
+<button onclick="selectDuration(10)">10s</button>
+<button onclick="selectDuration(15)">15s</button>
+</div>
+
+<button class="mainButton" onclick="generateVideo()">Generate Video</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+let duration=5;
+
+const fileInput=document.getElementById("referenceImage");
+const previewBox=document.getElementById("previewBox");
+const previewImage=document.getElementById("previewImage");
+
+fileInput.addEventListener("change",function(){
+const file=this.files[0];
+if(file){
+previewImage.src=URL.createObjectURL(file);
+previewBox.style.display="block";
+}
+});
+
+function selectDuration(value){
+duration=value;
+document.querySelectorAll(".buttons button").forEach(btn=>btn.classList.remove("active"));
+event.target.classList.add("active");
+}
+
+async function generateVideo(){
+
+const prompt=document.getElementById("prompt").value.trim();
+
+if(!prompt){
+alert("Please enter a video prompt.");
+return;
+}
+
+const button=document.querySelector(".mainButton");
+
+button.disabled=true;
+button.innerHTML="🎥 Preparing Video...";
+
+try{
+
+const response=await fetch("/api/video",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+prompt,
+duration
+})
+});
+
+const data=await response.json();
+
+document.getElementById("result").innerHTML=
+`<p>Duration: ${data.duration}s</p><p>${data.message}</p>`;
+
+}catch(err){
+
+document.getElementById("result").innerHTML=
+`<p>${err.message}</p>`;
+
+}finally{
+
+button.disabled=false;
+button.innerHTML="Generate Video";
+
+}
+
+}
+</script>
+
+</body>
+</html>
