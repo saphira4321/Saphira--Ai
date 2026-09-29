@@ -71,6 +71,10 @@ border-radius:30px;
 background:#2d2355;
 color:white;
 font-weight:bold;
+cursor:pointer;
+}
+.row button.active{
+background:#7b5cff;
 }
 .main{
 width:100%;
@@ -82,6 +86,7 @@ background:#7b5cff;
 color:white;
 font-size:18px;
 font-weight:bold;
+cursor:pointer;
 }
 #result{
 margin-top:20px;
@@ -107,12 +112,12 @@ text-align:center;
 <img id="preview">
 
 <div class="row">
-<button onclick="setDuration(5)">5s</button>
-<button onclick="setDuration(10)">10s</button>
-<button onclick="setDuration(15)">15s</button>
+<button id="btn5" class="active">5s</button>
+<button id="btn10">10s</button>
+<button id="btn15">15s</button>
 </div>
 
-<button id="generateBtn" class="main" onclick="generateVideo()">Generate Video</button>
+<button id="generateBtn" class="main">Generate Video</button>
 
 <div id="result"></div>
 
@@ -121,22 +126,28 @@ text-align:center;
 <script>
 let duration=5;
 
-function setDuration(d){
-duration=d;
-}
-
-const fileInput=document.getElementById("file");
 const preview=document.getElementById("preview");
+const fileInput=document.getElementById("file");
 
-fileInput.addEventListener("change",function(){
-const f=this.files[0];
+fileInput.addEventListener("change",()=>{
+const f=fileInput.files[0];
 if(f){
 preview.src=URL.createObjectURL(f);
 preview.style.display="block";
 }
 });
 
-async function generateVideo(){
+function select(btn,d){
+duration=d;
+document.querySelectorAll(".row button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+}
+
+document.getElementById("btn5").addEventListener("click",()=>select(document.getElementById("btn5"),5));
+document.getElementById("btn10").addEventListener("click",()=>select(document.getElementById("btn10"),10));
+document.getElementById("btn15").addEventListener("click",()=>select(document.getElementById("btn15"),15));
+
+document.getElementById("generateBtn").addEventListener("click",async()=>{
 
 const prompt=document.getElementById("prompt").value.trim();
 
@@ -146,7 +157,6 @@ return;
 }
 
 const btn=document.getElementById("generateBtn");
-
 btn.disabled=true;
 btn.innerHTML="Generating...";
 
@@ -167,14 +177,15 @@ document.getElementById("result").innerHTML=
 
 }catch(e){
 
-document.getElementById("result").innerHTML="Connection error.";
+document.getElementById("result").innerHTML=
+"Connection error.";
 
 }
 
 btn.disabled=false;
 btn.innerHTML="Generate Video";
 
-}
+});
 </script>
 
 </body>
