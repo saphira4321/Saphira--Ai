@@ -5,49 +5,175 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Saphira AI - Video Studio</title>
+
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#050816,#1a0f3d,#0b1f5c);color:white;padding:20px}
-.logo{text-align:center;font-size:34px;font-weight:bold;color:#7b5cff;margin:20px 0}
-.box{background:rgba(255,255,255,.08);padding:20px;border-radius:20px}
-textarea{width:100%;height:120px;padding:15px;border:none;border-radius:15px;box-sizing:border-box}
-.btns{display:flex;gap:10px;margin-top:15px}
-.btns button,.main{flex:1;padding:12px;border:none;border-radius:30px;background:#7b5cff;color:white;font-weight:bold}
-.main{width:100%;margin-top:20px}
-#result{text-align:center;margin-top:20px}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#050816,#1a0f3d,#0b1f5c);
+color:white;
+padding:20px;
+}
+.logo{
+font-size:34px;
+font-weight:bold;
+text-align:center;
+color:#7b5cff;
+margin-bottom:20px;
+}
+.box{
+background:rgba(255,255,255,.08);
+padding:20px;
+border-radius:20px;
+}
+textarea{
+width:100%;
+height:120px;
+padding:15px;
+border:none;
+border-radius:15px;
+box-sizing:border-box;
+font-size:16px;
+}
+.upload{
+display:block;
+margin:15px 0 8px;
+font-weight:bold;
+color:#cfc6ff;
+}
+input[type=file]{
+width:100%;
+padding:12px;
+border:2px dashed #7b5cff;
+border-radius:12px;
+background:rgba(255,255,255,.05);
+color:white;
+box-sizing:border-box;
+}
+#preview{
+display:none;
+width:100%;
+max-width:280px;
+margin:15px auto;
+border-radius:15px;
+border:2px solid #7b5cff;
+}
+.row{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+.row button{
+flex:1;
+padding:12px;
+border:none;
+border-radius:30px;
+background:#2d2355;
+color:white;
+font-weight:bold;
+}
+.main{
+width:100%;
+margin-top:20px;
+padding:15px;
+border:none;
+border-radius:40px;
+background:#7b5cff;
+color:white;
+font-size:18px;
+font-weight:bold;
+}
+#result{
+margin-top:20px;
+text-align:center;
+}
 </style>
 </head>
+
 <body>
 
 <div class="logo">Saphira AI</div>
 
 <div class="box">
+
 <h2>Video Studio</h2>
 
-<textarea id="prompt" placeholder="Describe the video you want..."></textarea>
+<textarea id="prompt" placeholder="Describe the video you want to create..."></textarea>
 
-<div class="btns">
-<button onclick="setD(5)">5s</button>
-<button onclick="setD(10)">10s</button>
-<button onclick="setD(15)">15s</button>
+<label class="upload">📷 Reference Image (Optional)</label>
+
+<input type="file" id="file" accept="image/*">
+
+<img id="preview">
+
+<div class="row">
+<button onclick="setDuration(5)">5s</button>
+<button onclick="setDuration(10)">10s</button>
+<button onclick="setDuration(15)">15s</button>
 </div>
 
-<button class="main" onclick="gen()">Generate Video</button>
+<button id="generateBtn" class="main" onclick="generateVideo()">Generate Video</button>
 
 <div id="result"></div>
+
 </div>
 
 <script>
 let duration=5;
-function setD(d){duration=d;}
-async function gen(){
-const prompt=document.getElementById("prompt").value;
-const r=await fetch("/api/video",{
+
+function setDuration(d){
+duration=d;
+}
+
+const fileInput=document.getElementById("file");
+const preview=document.getElementById("preview");
+
+fileInput.addEventListener("change",function(){
+const f=this.files[0];
+if(f){
+preview.src=URL.createObjectURL(f);
+preview.style.display="block";
+}
+});
+
+async function generateVideo(){
+
+const prompt=document.getElementById("prompt").value.trim();
+
+if(!prompt){
+alert("Please enter a video prompt.");
+return;
+}
+
+const btn=document.getElementById("generateBtn");
+
+btn.disabled=true;
+btn.innerHTML="Generating...";
+
+try{
+
+const res=await fetch("/api/video",{
 method:"POST",
-headers:{"Content-Type":"application/json"},
+headers:{
+"Content-Type":"application/json"
+},
 body:JSON.stringify({prompt,duration})
 });
-const data=await r.json();
-document.getElementById("result").innerHTML=`<p>${data.message}</p><p>${data.duration}s selected</p>`;
+
+const data=await res.json();
+
+document.getElementById("result").innerHTML=
+`🎥 ${data.message}<br>Duration: ${data.duration}s`;
+
+}catch(e){
+
+document.getElementById("result").innerHTML="Connection error.";
+
+}
+
+btn.disabled=false;
+btn.innerHTML="Generate Video";
+
 }
 </script>
 
