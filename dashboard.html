@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,35 +16,54 @@ padding:20px;
 }
 
 .logo{
-font-size:36px;
+text-align:center;
+font-size:38px;
 font-weight:bold;
 color:#7b5cff;
+margin-top:20px;
+}
+
+.sub{
 text-align:center;
+color:#cfc6ff;
 margin-bottom:30px;
 }
 
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
 .card{
-background:rgba(255,255,255,0.08);
-border-radius:20px;
-padding:20px;
-margin-bottom:20px;
-}
-
-.card h2{
-margin:0 0 10px;
-color:#7b5cff;
-}
-
-.button{
-display:block;
-text-decoration:none;
+background:rgba(255,255,255,.08);
+padding:25px;
+border-radius:22px;
 text-align:center;
-background:#7b5cff;
+text-decoration:none;
 color:white;
-padding:15px;
-border-radius:40px;
-margin-top:15px;
+transition:.2s;
+}
+
+.card:hover{
+background:rgba(123,92,255,.25);
+}
+
+.icon{
+font-size:38px;
+margin-bottom:12px;
+}
+
+.title{
+font-size:18px;
 font-weight:bold;
+}
+
+footer{
+margin-top:40px;
+text-align:center;
+color:#9f8cff;
+font-size:14px;
 }
 </style>
 </head>
@@ -51,24 +71,33 @@ font-weight:bold;
 <body>
 
 <div class="logo">Saphira AI</div>
+<div class="sub">Create Images, Videos, Voices & Chat with AI.</div>
 
-<div class="card">
-<h2>AI Image Generator</h2>
-<p>Create amazing AI images from text prompts.</p>
-<a href="#" class="button">Open</a>
+<div class="grid">
+
+<a class="card" href="image.html">
+<div class="icon">🖼️</div>
+<div class="title">Image Studio</div>
+</a>
+
+<a class="card" href="video.html">
+<div class="icon">🎥</div>
+<div class="title">Video Studio</div>
+</a>
+
+<a class="card" href="voice.html">
+<div class="icon">🎙️</div>
+<div class="title">Voice Studio</div>
+</a>
+
+<a class="card" href="chat.html">
+<div class="icon">💬</div>
+<div class="title">AI Chat</div>
+</a>
+
 </div>
 
-<div class="card">
-<h2>AI Video Generator</h2>
-<p>Create videos from your ideas.</p>
-<a href="#" class="button">Open</a>
-</div>
-
-<div class="card">
-<h2>Text to Speech</h2>
-<p>Turn text into realistic voices.</p>
-<a href="#" class="button">Open</a>
-</div>
+<footer>Powered by Saphira AI ✨</footer>
 
 </body>
 </html>
