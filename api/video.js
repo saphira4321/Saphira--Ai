@@ -1,0 +1,14 @@
+export default function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const { prompt, duration } = req.body || {};
+
+  return res.status(200).json({
+    success: true,
+    message: "Video API is ready.",
+    prompt: prompt || "",
+    duration: duration || 5
+  });
+}
